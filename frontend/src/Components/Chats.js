@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { ChatState } from "../context/context";
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -10,18 +11,21 @@ import {
   List,
   ListItem,
   Modal,
+  Snackbar,
   Typography,
 } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
+import UserBadge from "../Miscellaneous/UserBadge";
 
 const Chats = () => {
-  const [loggeduser, setloggeduser] = useState()
+  const [loggeduser, setloggeduser] = useState();
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [searchresult, setSearchresult] = React.useState([]);
   const [groupChatName, setGroupChatName] = React.useState("");
   const [selectedUsers, setSelectedUsers] = React.useState([]);
+  const [openAlert, setOpenAlert] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -69,9 +73,25 @@ const Chats = () => {
     }
   };
 
-  const handlesubmit = async () => {}
+  const handlesubmit = async () => {};
 
-  const handleAddUser = (user) => {}
+  const handleUser = (user) => {
+    if (selectedUsers.includes(user)) {
+      <Snackbar open={openAlert} autoHideDuration={2}>
+        <Alert onClose={() => setOpenAlert(false)} severity="warning">
+          User Already Selected
+        </Alert>
+      </Snackbar>;
+      console.log(selectedUsers);
+    } else {
+      setSelectedUsers([...selectedUsers, user]);
+    }
+  };
+
+  const getSender = (loggeduser, users) => {
+    return users[0]._id === loggeduser._id ? users[1].name : users[0].name;
+  };
+  const handleDelete = async (chat) => {}
   return (
     <Box
       width={{ base: "20%", md: "30%" }}
@@ -169,15 +189,58 @@ const Chats = () => {
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
           />
+          <Button
+            variant="contained"
+            color="success"
+            size="small"
+            style={{
+              width: "20%",
+              display: "flex",
+              marginLeft: "400px",
+            }}
+            onClick={handlesubmit}
+          >
+            Create
+          </Button>
+
+          {selectedUsers.map((u) => (
+          <Box
+            key={u._id}
+            style={{
+              width:"140px",
+              display: "inline-table",
+              alignItems: "center",
+              marginBottom: "1px",
+              marginLeft: "80px",
+              backgroundColor: "#4caf50",
+              border: "1px solid #474b4e",
+              borderRadius: "5px",
+            }}
+          >
+            <Typography
+              style={{ marginLeft: "10px", color: "black", width: "140px" }}
+            >
+              {u.name}
+            </Typography>
+            <CloseIcon
+              cursor={"pointer"}
+              onClick={() => handleDelete(u)}
+              style={{ float: "right" }}
+              color="#474b4e"
+            />
+          </Box>
+          ))}
+            
+          
+
+
           {searchresult?.slice(0, 3).map((user) => (
-            <Button
+            <ListItem
               key={user._id}
-              onClick={() => handleAddUser(user)}
+              onClick={() => handleUser(user)}
               style={{
-                display: "flex",
-                width: "60%",
-                padding: "10px",
-                marginLeft: "60px",
+                width: "55%",
+                marginLeft: "80px",
                 backgroundColor: "white",
                 border: "1px solid #474b4e",
                 borderRadius: "5px",
@@ -189,25 +252,8 @@ const Chats = () => {
               >
                 {user.name}
               </Typography>
-            </Button>
+            </ListItem>
           ))}
-
-          <Box>
-            <Button
-              variant="contained"
-              color="success"
-              size="small"
-              style={{
-                margin: 15,
-                width: "20%",
-                display: "flex",
-                marginLeft: "430px",
-              }}
-              onClick={handlesubmit}
-            >
-              Create
-            </Button>
-          </Box>
         </Box>
       </Modal>
 
@@ -229,7 +275,9 @@ const Chats = () => {
                 variant="subtitle1"
                 style={{ marginLeft: 15, fontWeight: "bold" }}
               >
-                {chat.users[1].name}
+                {!chat.isGroupChat
+                  ? getSender(loggeduser, chat.users)
+                  : chat.chatName}
               </Typography>
             </ListItem>
           ))
