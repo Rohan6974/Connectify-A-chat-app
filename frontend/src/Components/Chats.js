@@ -8,15 +8,13 @@ import {
   Box,
   Button,
   Divider,
-  List,
   ListItem,
   Modal,
   Snackbar,
   Typography,
+  CircularProgress,
 } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
-import UserBadge from "../Miscellaneous/UserBadge";
 
 const Chats = () => {
   const [loggeduser, setloggeduser] = useState();
@@ -31,6 +29,10 @@ const Chats = () => {
 
   const { user, setuser, chats, setchats, selectedchat, setselectedchat } =
     ChatState();
+
+    
+
+    
 
   const getschats = async () => {
     try {
@@ -73,16 +75,50 @@ const Chats = () => {
     }
   };
 
-  const handlesubmit = async () => {};
+  const handlesubmit = async () => {
+    if (!groupChatName || selectedUsers.length === 0) {
+      return setOpenAlert(true);
+    }
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const payload = {
+        name: groupChatName,
+        users: JSON.stringify(selectedUsers.map((u) => u._id)), // Ensure correct format
+      };
+
+      console.log("Sending payload:", payload);
+
+      const { data } = await axios.post(
+        "http://localhost:9438/chats/group",
+        payload,
+        config
+      );
+
+      console.log("Response received:", data);
+
+      if (data) {
+        setchats([data, ...chats]);
+        handleClose();
+        setGroupChatName("");
+        setSelectedUsers([]);
+      } else {
+        console.log("No response received");
+      }
+    } catch (error) {
+      console.log(error.response ? error.response.data : error.message);
+    }
+  };
 
   const handleUser = (user) => {
     if (selectedUsers.includes(user)) {
-      <Snackbar open={openAlert} autoHideDuration={2}>
-        <Alert onClose={() => setOpenAlert(false)} severity="warning">
-          User Already Selected
-        </Alert>
-      </Snackbar>;
-      console.log(selectedUsers);
+      alert("User already added");
     } else {
       setSelectedUsers([...selectedUsers, user]);
     }
@@ -91,43 +127,52 @@ const Chats = () => {
   const getSender = (loggeduser, users) => {
     return users[0]._id === loggeduser._id ? users[1].name : users[0].name;
   };
-  const handleDelete = async (chat) => {}
+  const handleDelete = async (deletuser) => {
+    setSelectedUsers(selectedUsers.filter((sel) => sel._id !== deletuser._id));
+  };
   return (
     <Box
-      width={{ base: "20%", md: "30%" }}
-      display={{ base: selectedchat ? "none" : "flex", md: "flex" }}
+      width={{ base: "100%", md: "31%" }}
       flexDirection="column"
       bgcolor={"#fff"}
       border={"3px solid #000"}
       borderRadius={3}
     >
-      <Typography
-        align="center"
-        variant="h6"
-        fontWeight="bold"
-        padding={3}
-        color={"#000"}
-        marginRight={30}
+      <Box
+        display={{ base: selectedchat ? "none" : "flex", md: "flex" }}
+        flexDirection="column"
+        border={"1px solid grey"}
+        borderRadius={3}
+        bgcolor={"#fff"}
       >
-        My Chats
-      </Typography>
+        <Typography
+          align="center"
+          variant="h6"
+          fontWeight="bold"
+          padding={3}
+          color={"#000"}
+          marginRight={30}
+        >
+          Chats
+        </Typography>
 
-      <Button
-        variant="contained"
-        size="small"
-        style={{
-          margin: 15,
-          width: "40%",
-          display: "flex",
-          marginLeft: "48%",
-          marginTop: "-55px",
-          backgroundColor: "#4caf50",
-        }}
-        onClick={handleOpen}
-      >
-        New Group Chat
-        <AddIcon />
-      </Button>
+        <Button
+          variant="contained"
+          size="small"
+          style={{
+            margin: 15,
+            width: "40%",
+            display: "flex",
+            marginLeft: "48%",
+            marginTop: "-55px",
+            backgroundColor: "#4caf50",
+          }}
+          onClick={handleOpen}
+        >
+          Group Chat
+          <AddIcon />
+        </Button>
+      </Box>
 
       <Modal open={open}>
         <Box
@@ -202,37 +247,40 @@ const Chats = () => {
           >
             Create
           </Button>
-
-          {selectedUsers.map((u) => (
-          <Box
-            key={u._id}
-            style={{
-              width:"140px",
-              display: "inline-table",
-              alignItems: "center",
-              marginBottom: "1px",
-              marginLeft: "80px",
-              backgroundColor: "#4caf50",
-              border: "1px solid #474b4e",
-              borderRadius: "5px",
-            }}
-          >
-            <Typography
-              style={{ marginLeft: "10px", color: "black", width: "140px" }}
-            >
-              {u.name}
-            </Typography>
-            <CloseIcon
-              cursor={"pointer"}
-              onClick={() => handleDelete(u)}
-              style={{ float: "right" }}
-              color="#474b4e"
-            />
+          <Box display="flex" flexWrap="wrap" gap={2} marginBottom={4}>
+            {selectedUsers.map((u) => (
+              <Box
+                key={u._id}
+                fontSize={12}
+                p={1}
+                m={1}
+                borderRadius={2}
+                border={"1px solid #474b4e"}
+                bgcolor={"#4caf50"}
+                height={10}
+              >
+                <Typography color={"black"} marginTop={-1}>
+                  {u.name}
+                </Typography>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  marginRight={5}
+                  fontSize={10}
+                  cursor={"pointer"}
+                  color="#474b4e"
+                >
+                  <CloseIcon
+                    onClick={() => handleDelete(u)}
+                    style={{ float: "right", marginRight: "-70px" }}
+                    cursor={"pointer"}
+                    color="#474b4e"
+                  />
+                </Box>
+              </Box>
+            ))}
           </Box>
-          ))}
-            
-          
-
 
           {searchresult?.slice(0, 3).map((user) => (
             <ListItem
@@ -257,19 +305,18 @@ const Chats = () => {
         </Box>
       </Modal>
 
-      <Divider style={{ marginBottom: "10px", color: "#474b4e" }} />
-
-      <List>
-        {Array.isArray(chats) ? (
-          chats.map((chat) => (
-            <ListItem
+      <Box display="flex" flexDirection="column">
+        {
+        
+        Object.values(chats).map((chat) => (
+          <ListItem
               key={chat._id}
               onClick={() => setselectedchat(chat)}
               style={{ cursor: "pointer" }}
               color={chat.isGroupChat ? "primary" : "secondary"}
             >
               <Avatar
-                src={chat.isGroupChat ? chat.chatPic : chat.users[1].pic}
+                src={chat.pic}
               />
               <Typography
                 variant="subtitle1"
@@ -280,11 +327,10 @@ const Chats = () => {
                   : chat.chatName}
               </Typography>
             </ListItem>
-          ))
-        ) : (
-          <CircularProgress />
-        )}
-      </List>
+        ))
+        }
+
+      </Box>
     </Box>
   );
 };

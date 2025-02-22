@@ -4,13 +4,14 @@ import  {useNavigate}  from "react-router-dom";
 const chatcontext = createContext();
 const ContextProvider = ({ children }) => {
   const [user, setuser] = useState([]);
-  const [chats, setchats] = useState([]);
+  const [chats, setchats] = useState([[]]);
   const [selectedchat, setselectedchat] = useState([]);
 
 
   const navigate = useNavigate();
 
     useEffect(() => {
+      
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       setuser(userInfo);  
       if(!userInfo) navigate("/login")

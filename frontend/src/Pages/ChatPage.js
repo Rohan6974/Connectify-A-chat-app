@@ -9,17 +9,15 @@ import MessageBox from "../Components/MessageBox"
 const ChatPage = () => {
   const { user } = ChatState();
   return (
-    <Box style={{ height: "100vh", width: "100%", backgroundColor: "#282C34"  }}
-    width={{ base: "120%", md: "120%" }}>
-       {user && <Navbar />}
-       
-
-       <Box display="flex" style={{ height: "calc(100vh - 64px)" }} width={{ base: "120%", md: "100%" }} d={{ base: "none", md: "flex" }}>
-        {user && <Chats />}
-        {user && <MessageBox />}
-      </Box>
-     
+    <div style={{ width: "100%" }}>
+    {user && <Navbar />}
+    <Box d="flex" justifyContent="space-between" w="100%" h="91.5vh" p="10px">
+      {user && <Chats/>}
+      {user && (
+        <MessageBox />
+      )}
     </Box>
+  </div>
   );
 };
 
