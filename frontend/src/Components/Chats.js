@@ -30,10 +30,6 @@ const Chats = () => {
   const { user, setuser, chats, setchats, selectedchat, setselectedchat } =
     ChatState();
 
-    
-
-    
-
   const getschats = async () => {
     try {
       const res = await axios.get("http://localhost:9438/chats", {
@@ -125,7 +121,14 @@ const Chats = () => {
   };
 
   const getSender = (loggeduser, users) => {
-    return users[0]._id === loggeduser._id ? users[1].name : users[0].name;
+    if (!Array.isArray(users) || users.length < 2) {
+      return <CircularProgress />;
+    }
+    if (users[0]._id === loggeduser._id) {
+      return users[1].name;
+    } else {
+      return users[0].name;
+    }
   };
   const handleDelete = async (deletuser) => {
     setSelectedUsers(selectedUsers.filter((sel) => sel._id !== deletuser._id));
@@ -306,30 +309,32 @@ const Chats = () => {
       </Modal>
 
       <Box display="flex" flexDirection="column">
-        {
-        
-        Object.values(chats).map((chat) => (
+        {Object.values(chats).map((chat) => (
           <ListItem
-              key={chat._id}
-              onClick={() => setselectedchat(chat)}
-              style={{ cursor: "pointer" }}
-              color={chat.isGroupChat ? "primary" : "secondary"}
+            key={chat._id}
+            onClick={() => setselectedchat(chat)}
+            style={{ cursor: "pointer" }}
+            color={chat.isGroupChat ? "primary" : "secondary"}
+            
+          >
+            <Avatar
+              src={
+                chat.isGroupChat
+                  ? chat.groupAdmin?.pic
+                  : chat.users?.find((user) => user._id !== loggeduser._id)?.pic || "link"
+                 
+              }
+            />
+            <Typography
+              variant="subtitle1"
+              style={{ marginLeft: 15, fontWeight: "bold" }}
             >
-              <Avatar
-                src={chat.pic}
-              />
-              <Typography
-                variant="subtitle1"
-                style={{ marginLeft: 15, fontWeight: "bold" }}
-              >
-                {!chat.isGroupChat
-                  ? getSender(loggeduser, chat.users)
-                  : chat.chatName}
-              </Typography>
-            </ListItem>
-        ))
-        }
-
+              {chat.isGroupChat
+                ? chat.chatName
+                : getSender(loggeduser, chat.users)}
+            </Typography>
+          </ListItem>
+        ))}
       </Box>
     </Box>
   );
