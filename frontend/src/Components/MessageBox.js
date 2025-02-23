@@ -1,11 +1,14 @@
 import React from 'react'
 import { Box, Button } from '@mui/material'
 import { ChatState } from '../context/context'
+import SingleChat from './SingleChat'
 
-const MessageBox = () => {
+const MessageBox = ({fetchAgain, setfetchAgain}) => {
   const { selectedchat } = ChatState()
   return (
-    <Box style={{color:"white", fontFamily:"cursive", padding:"20px", }}  display={{base:selectedchat?"none":"flex", md:"flex"}}>
+    <Box style={{color:"white", fontFamily:"cursive", }} width={"60%"} display={{base:selectedchat?"none":"flex", md:"flex"}} bgcolor={"#282C34"}>
+
+      <SingleChat fetchAgain={fetchAgain} setfetchAgain={setfetchAgain} />
     
     </Box>
   )

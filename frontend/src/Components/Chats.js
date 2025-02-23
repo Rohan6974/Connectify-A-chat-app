@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-const Chats = () => {
+const Chats = ({ fetchAgain }) => {
   const [loggeduser, setloggeduser] = useState();
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
@@ -48,7 +48,7 @@ const Chats = () => {
     if (loggeduser) {
       getschats();
     }
-  }, [loggeduser]);
+  }, [loggeduser, fetchAgain]);
 
   const handleSearch = async (query) => {
     setSearch(query);
@@ -310,11 +310,13 @@ const Chats = () => {
 
       <Box display="flex" flexDirection="column">
         {Object.values(chats).map((chat) => (
+          <Box bgcolor={selectedchat === chat ? "#4caf50" : "#fff"}>
           <ListItem
             key={chat._id}
             onClick={() => setselectedchat(chat)}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer" ,  }}
             color={chat.isGroupChat ? "primary" : "secondary"}
+            
             
           >
             <Avatar
@@ -334,6 +336,7 @@ const Chats = () => {
                 : getSender(loggeduser, chat.users)}
             </Typography>
           </ListItem>
+          </Box>
         ))}
       </Box>
     </Box>
