@@ -6,6 +6,7 @@ const Cors = require("cors");
 const {ErrorHandler,NotFoundHandler} = require("./Middleware/ErrorMiddleware")
 const AuthRoute = require("./Routes/AuthRoute")
 const ChatsRoutes = require("./Routes/ChatsRoutes");
+const MessageRoutes = require("./Routes/MessageRoutes");
 const { Protect } = require("./Middleware/AuthorizeMiddleware");
 
 connectDatabase
@@ -19,6 +20,7 @@ app.use(Cors())
 app.use("/user", UserRoute)
 app.use("/auth", AuthRoute)
 app.use("/chats" ,ChatsRoutes)
+app.use("/messages" ,MessageRoutes)
 
 app.use(NotFoundHandler)
 app.use(ErrorHandler)

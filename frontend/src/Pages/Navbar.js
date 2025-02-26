@@ -172,7 +172,7 @@ export default function MenuAppBar() {
   );
 
   return (
-    <Box bgcolor={"#282C34"} width="100%" height="70px">
+    <Box bgcolor={"#282C34"} width="100%" height="70px" position={"absolute"}>
       <Toolbar>
         <Typography
           variant="h6"

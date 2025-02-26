@@ -1,7 +1,7 @@
-import { Box } from "@mui/material";
 import React from "react";
+import { Box } from "@mui/material";
 
-const UserBadge = (user, handleFunction) => {
+const UserBadge = ({ user, handleFunction, admin }) => {
   return (
     <Box
       px={2}
@@ -14,9 +14,10 @@ const UserBadge = (user, handleFunction) => {
       colorScheme="purple"
       cursor="pointer"
       onClick={handleFunction}
-      color={"black"}
     >
       {user.name}
+      {admin === user._id && <span> (Admin)</span>}
+      {/* <CloseIcon pl={1} /> */}
     </Box>
   );
 };

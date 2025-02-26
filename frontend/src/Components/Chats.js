@@ -137,9 +137,9 @@ const Chats = ({ fetchAgain }) => {
     <Box
       width={{ base: "100%", md: "31%" }}
       flexDirection="column"
-      bgcolor={"#fff"}
       border={"3px solid #000"}
       borderRadius={3}
+      marginTop={"70px"}
     >
       <Box
         display={{ base: selectedchat ? "none" : "flex", md: "flex" }}
@@ -248,7 +248,7 @@ const Chats = ({ fetchAgain }) => {
             }}
             onClick={handlesubmit}
           >
-            Create
+            Create Group
           </Button>
           <Box display="flex" flexWrap="wrap" gap={2} marginBottom={4}>
             {selectedUsers.map((u) => (
