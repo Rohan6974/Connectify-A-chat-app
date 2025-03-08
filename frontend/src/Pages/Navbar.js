@@ -187,7 +187,7 @@ export default function MenuAppBar() {
           Connectify
         </Typography>
 
-        <Button variant="contained" color="success" onClick={toggleDrawer(true)}  >
+        <Button variant="contained" color="success" onClick={toggleDrawer(true)} sx={{cursor:"pointer"}}  >
           Search User
         </Button>
 

@@ -21,7 +21,7 @@ const MessageBox = ({ fetchAgain, setFetchAgain }) => {
       marginTop={"2000px"}
       sx={{
         "&::-webkit-scrollbar": {
-          width: "0.4em",
+          width: "0",
         },
         "&::-webkit-scrollbar-track": {
           backgroundColor: "#282C34",
@@ -41,7 +41,8 @@ const MessageBox = ({ fetchAgain, setFetchAgain }) => {
         
       }}
     }
-    >{
+    >
+      {
      selectedchat && (
         <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />)
     }

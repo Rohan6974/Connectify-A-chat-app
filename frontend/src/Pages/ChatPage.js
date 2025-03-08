@@ -19,11 +19,13 @@ const ChatPage = () => {
         alignItems="end"
         justifyContent="end"
         width="92%"
-        height="100vh"
+        height="430px"
         marginLeft={12}
-        marginTop={"-250px"}
+        marginTop={"-420px"}
+        paddingBottom={2}
         
-           >{
+           >
+            {
         selectedchat && (
           <MessageBox fetchAgain={fetchAgain} setfetchAgain={setfetchAgain} />
         )

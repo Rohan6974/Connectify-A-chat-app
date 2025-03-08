@@ -33,7 +33,7 @@ const Login = () => {
       localStorage.setItem("userInfo", JSON.stringify(response.data));
 
       console.log(response.data);
-      setAlertMessage(true);
+      setAlertMessage(true)
       setOpenAlert(false);}
     catch (err) {
       console.log(err);
