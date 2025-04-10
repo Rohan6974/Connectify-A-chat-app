@@ -15,4 +15,4 @@ const getMessages = expressAsyncHandler(async(req,res)=>{
 
 })
 
-module.exports = getMessages
+module.exports = getMessages;

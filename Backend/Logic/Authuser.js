@@ -2,9 +2,6 @@ const nodemailer = require("nodemailer");
 
 const Authuser = async (req, res) => {
   const {email} = req.body
-
-  console.log(email)
-
 const otp = Math.floor(100000 + Math.random() * 900000);
 
 const transporter = nodemailer.createTransport({
@@ -24,10 +21,7 @@ async function main() {
     to: `${email}`,
     subject: `your verification code ${otp}`, 
     text: `your verification code ${otp}`,
-    html: "<b></b>",
   });
-
-  console.log("Message sent: %s", info.messageId);
   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
 main().catch(console.error);

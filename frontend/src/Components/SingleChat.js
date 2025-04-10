@@ -1,45 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { ChatState } from "../context/context";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  FormControl,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import GroupChatModal from "../Miscellaneous/GroupChatModal";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
+import "../Css/Singlechat.css";
+import io from "socket.io-client";
+
+
+const ENDPOINT = "http://localhost:9438";
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setfetchAgain }) => {
   const { user, selectedchat } = ChatState();
   const [messages, setmessages] = useState([]);
-  const [loading, setloading] = useState(false);
   const [newmessage, setnewmessage] = useState("");
+  const [socketConnected, setsocketConnected] = useState(false);
+  const [typing, settyping] = useState(false);
+  const [istyping, setistyping] = useState(false);
 
-  const sendmessage = async (event) => {
+  const sendmessage = async () => {
+    if (!newmessage.trim()) return;
+
     const config = {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
     };
-    setloading(true);
-    const { data } = await axios.post(
-      "http://localhost:9438/messages",
-      {
-        content: newmessage,
-        chatId: selectedchat._id,
-      },
-      config
-    );
 
-    setnewmessage("");
-    setmessages([...messages, data]);
-    fetchMessages();
-  
-    console.log(data);
-    setloading(false);
+    try {
+      const { data } = await axios.post(
+        "http://localhost:9438/messages",
+        {
+          content: newmessage,
+          chatId: selectedchat._id,
+        },
+        config
+      );
+
+      socket.emit("new message", data);
+      setnewmessage("");
+      setmessages([...messages, data]);
+      fetchMessages();
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   };
 
   const fetchMessages = async () => {
@@ -56,107 +61,123 @@ const SingleChat = ({ fetchAgain, setfetchAgain }) => {
         `http://localhost:9438/messages/${selectedchat._id}`,
         config
       );
-      setmessages(data); // Update state with the latest messages
+      setmessages(data);
+
+      socket.emit("join chat", selectedchat._id);
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error fetching messages:", error)
     }
   };
 
   useEffect(() => {
     fetchMessages();
+
+    selectedChatCompare = selectedchat;
   }, [selectedchat, fetchAgain]);
 
-  const inputhandler = (e) => {
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connected", () => setsocketConnected(true));
+    socket.on("typing", () => setistyping(true));
+    socket.on("stop typing", () => setistyping(false));
+  }, []);
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (!selectedChatCompare ||selectedChatCompare._id !== newMessageRecieved.chat._id) {
+        // give notification
+      } else {
+        setmessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
+
+  const typingHandler = (e) => {
     setnewmessage(e.target.value);
-  };
+
+    if (!socketConnected) return;
+
+    if (!typing) {
+      settyping(true);
+      socket.emit("typing", selectedchat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", selectedchat._id);
+        settyping(false);
+      }
+    }, timerLength);
+
+  }
 
   return (
-    <>
+    <div className="chat-container">
       {selectedchat ? (
         <>
-          {selectedchat.isGroupChat && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                padding: "10px",
-                backgroundColor: "#333",
-                borderRadius: "8px",
-                marginLeft: "800px",
-              }}
-            >
+          {selectedchat.isGroupChat ? (
+            <div className="group-header">
               <GroupChatModal
                 fetchAgain={fetchAgain}
                 setfetchAgain={setfetchAgain}
               />
-            </Box>
-          )}
+            </div>
+          
+        ) : (
+          <Avatar
+              src={selectedchat.users[1].pic}
+              alt={selectedchat.isGroupChat ? selectedchat.name : user.name}
+              className="avatar"
+            />
+        )}
 
-          <Box
-            sx={{
+          <div
+            className="messages-container"
+            style={{
               flex: 1,
               overflowY: "auto",
-              minHeight: "400px",
-              maxHeight: "600px",
-            }}
-          >
-            {messages.map((message) => (
-              <Box
-                key={message._id}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems:
-                    message.sender._id === user._id ? "flex-end" : "flex-start",
-                  marginBottom: "10px",
-                }}
-              >
-                <Box
-                  sx={{
-                    padding: "10px",
-                    borderRadius: "8px",
-                    backgroundColor:
-                      message.sender._id === user._id ? "#4caf50" : "#333",
-                    color: message.sender._id === user._id ? "black" : "white",
-                  }}
-                >
-                  <Typography>{message.content}</Typography>
-                </Box>
-              </Box>
-            ))}
-          </Box>
-
-          <input
-            type="text"
-            placeholder="Type a message..."
-            style={{
-              width: "850px",
+              maxHeight: "400px",
               padding: "10px",
-              borderRadius: "10px",
-              border: "2px solid #4caf50",
-              backgroundColor: "black",
-              color: "white",
-              marginBottom: "10px",
-              marginLeft: "-20px",
             }}
-            onChange={inputhandler}
-            value={newmessage}
-          />
-          <Button
-            onClick={sendmessage}
-            style={{ width: "30px", marginLeft: "870px", marginTop: "-50px" }}
           >
-            <SendIcon color="#4caf50" />
-          </Button>
+           
+            {messages.map((message) => (
+              <div
+                key={message._id}
+                className={`message ${
+                  message.sender._id === user._id ? "sent" : "received"
+                }`}
+              >
+                <Typography className="message-text">
+                  {message.content}
+                </Typography>
+              </div>
+            ))}
+          </div>
+
+          <div className="input-container">
+
+            {istyping ? <div className="typing-indicator">Typing...</div> : (<></>)}
+            <input
+              type="text"
+              placeholder="Type a message..."
+              className="message-input"
+              value={newmessage}
+              onChange={typingHandler}
+            />
+            <Button onClick={sendmessage} className="send-button">
+              <SendIcon />
+            </Button>
+          </div>
         </>
       ) : (
-        <Box sx={{ textAlign: "center", marginTop: 40 }}>
-          <Typography color="#4caf50" fontFamily={"cursive"} fontSize={20}>
-            Select a chat to start messaging
-          </Typography>
-        </Box>
+        <></>
       )}
-    </>
+    </div>
   );
 };
 

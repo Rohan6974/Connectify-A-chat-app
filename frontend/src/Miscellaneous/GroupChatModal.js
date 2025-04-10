@@ -57,10 +57,9 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
         config
       );
 
+      setchats(chats.map((c) => (c._id === data._id ? data : c)));
       setselectedchat(data);
-      selectedchat(chats.map((c) => (c._id === data._id ? data : c)));
       setfetchagain(!fetchagain);
-
     } catch (error) {
       <Snackbar open={openAlert} autoHideDuration={2}>
         <Alert onClose={() => setopenAlert(false)} severity="warning">
@@ -71,9 +70,8 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
     setgroupName("");
   };
   const handleAdd = async () => {
-    if (!groupName || !selectedUsers) {
-      return;
-    }
+
+    if (selectedUsers.length === 0) return;
 
     try {
       const config = {
@@ -81,23 +79,27 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.put(
-        "http://localhost:9438/chats/groupadd",
-        {
-          chatId: selectedchat._id,
-          userId: selectedUsers.map((u) => u._id),
-        },
-        config
-      );
-      setselectedchat(data);
+
+      for (const userToAdd of selectedUsers) {
+        const { data } = await axios.put(
+          "http://localhost:9438/chats/groupadd",
+          {
+            chatId: selectedchat._id,
+            userId: userToAdd._id,
+          },
+          config
+        );
+
+        console.log("successfully added" + data);
+
+        setselectedchat(data);
+        setchats(chats.map((c) => (c._id === data._id ? data : c)));
+      }
+
       setfetchagain(!fetchagain);
-      setchats(chats.map((c) => (c._id === data._id ? data : c)));
+      setSelectedUsers([]);
     } catch (error) {
-      <Snackbar open={openAlert} autoHideDuration={2}>
-        <Alert onClose={() => setopenAlert(false)} severity="warning">
-          User Not Found
-        </Alert>
-      </Snackbar>;
+      alert("User Not Found");
     }
   };
 
@@ -139,10 +141,17 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
   const handleClose = () => setOpen(false);
   return (
     <div>
-      <Button onClick={handleOpen} fullWidth >
-        <VisibilityIcon sx={{ color: "#4caf50", cursor: "pointer" }} />
+      <Button onClick={handleOpen} fullWidth>
+        <VisibilityIcon
+          sx={{
+            width: "900px",
+            color: "#4caf50",
+            cursor: "pointer",
+            fontSize: "20px",
+          }}
+        />
       </Button>
-      
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -181,9 +190,6 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
                   width={"50%"}
                 >
                   <Typography>{user.name}</Typography>
-                  <IconButton size="small" onClick={() => handleRemove(user)}>
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
                 </Box>
               ))}
 

@@ -119,17 +119,14 @@ const Chats = ({ fetchAgain }) => {
       setSelectedUsers([...selectedUsers, user]);
     }
   };
-
   const getSender = (loggeduser, users) => {
-    if (!Array.isArray(users) || users.length < 2) {
+    if (!Array.isArray(users) || users.length < 2 || !loggeduser) {
       return <CircularProgress />;
     }
-    if (users[0]._id === loggeduser._id) {
-      return users[1].name;
-    } else {
-      return users[0].name;
-    }
+  
+    return users[0]._id === loggeduser._id ? users[1].name : users[0].name;
   };
+  
   const handleDelete = async (deletuser) => {
     setSelectedUsers(selectedUsers.filter((sel) => sel._id !== deletuser._id));
   };
@@ -309,35 +306,36 @@ const Chats = ({ fetchAgain }) => {
       </Modal>
 
       <Box display="flex" flexDirection="column">
-        {Object.values(chats).map((chat) => (
-          <Box bgcolor={selectedchat === chat ? "#4caf50" : "#fff"}>
-          <ListItem
-            key={chat._id}
-            onClick={() => setselectedchat(chat)}
-            style={{ cursor: "pointer" ,  }}
-            color={chat.isGroupChat ? "primary" : "secondary"}
-            
-            
-          >
-            <Avatar
-              src={
-                chat.isGroupChat
-                  ? chat.groupAdmin?.pic
-                  : chat.users?.find((user) => user._id !== loggeduser._id)?.pic || "link"
-                 
-              }
-            />
-            <Typography
-              variant="subtitle1"
-              style={{ marginLeft: 15, fontWeight: "bold" }}
+        {loggeduser &&
+          Object.values(chats).map((chat) => (
+            <Box
+              key={chat._id}
+              bgcolor={selectedchat === chat ? "#4caf50" : "#fff"}
             >
-              {chat.isGroupChat
-                ? chat.chatName
-                : getSender(loggeduser, chat.users)}
-            </Typography>
-          </ListItem>
-          </Box>
-        ))}
+              <ListItem
+                onClick={() => setselectedchat(chat)}
+                style={{ cursor: "pointer" }}
+                color={chat.isGroupChat ? "primary" : "secondary"}
+              >
+                <Avatar
+                  src={
+                    chat.isGroupChat
+                      ? chat.groupAdmin?.pic
+                      : chat.users?.find((user) => user._id !== loggeduser._id)
+                          ?.pic || "link"
+                  }
+                />
+                <Typography
+                  variant="subtitle1"
+                  style={{ marginLeft: 15, fontWeight: "bold" }}
+                >
+                  {chat.isGroupChat
+                    ? chat.chatName
+                    : getSender(loggeduser, chat.users)}
+                </Typography>
+              </ListItem>
+            </Box>
+          ))}
       </Box>
     </Box>
   );

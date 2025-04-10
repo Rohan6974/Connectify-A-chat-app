@@ -6,31 +6,26 @@ import Chats from "../Components/Chats";
 import MessageBox from "../Components/MessageBox";
 
 const ChatPage = () => {
-  const { user , selectedchat } = ChatState();
+  const { user, selectedchat } = ChatState();
   const [fetchAgain, setfetchAgain] = useState(false);
   return (
-    <div style={{ width: "100%",}}>
+    <div style={{ width: "100%" }}>
       {user && <Navbar />}
-      <Box d="flex" justifyContent="space-between" w="100%" h="91.5vh" p="10px" >
-        {user && <Chats fetchAgain={fetchAgain}  />}
+      <Box d="flex" justifyContent="space-between" w="100%" h="91.5vh" p="10px">
+        {user && <Chats fetchAgain={fetchAgain} />}
       </Box>
-      <Box  
+      <Box
         display="flex"
         alignItems="end"
         justifyContent="end"
         width="92%"
         height="430px"
         marginLeft={12}
-        marginTop={"-420px"}
         paddingBottom={2}
-        
-           >
-            {
-        selectedchat && (
+      >
+        {user && (
           <MessageBox fetchAgain={fetchAgain} setfetchAgain={setfetchAgain} />
-        )
-      }
-       
+        )}
       </Box>
     </div>
   );

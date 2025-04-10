@@ -18,7 +18,6 @@ const Auth = () => {
     try {
       const res = await axios.post("http://localhost:9438/auth", { email,otp, Headers: { "Content-Type": "application/json" } });
       const data = await res.data;
-      console.log(data);
       setReceivedOtp(data.otp);
 
       if (res.data.otp) {

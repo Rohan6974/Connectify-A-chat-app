@@ -15,12 +15,11 @@ const Login = () => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     if (userInfo) {
       navigate("/auth");
-    }else{
-      navigate("/login")
     }
   }, [navigate]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!email || !password) {
       return setOpenAlert(true);
     }
@@ -31,10 +30,10 @@ const Login = () => {
         password,
       });
       localStorage.setItem("userInfo", JSON.stringify(response.data));
-
-      console.log(response.data);
       setAlertMessage(true)
-      setOpenAlert(false);}
+      setOpenAlert(false);
+      navigate("/auth");
+    }
     catch (err) {
       console.log(err);
     }

@@ -1,6 +1,7 @@
 const Asynchandler = require("express-async-handler")
 const User = require("../schema/Userschema")
 const TOKEN = require("../TOKEN")
+const bcrypt = require("bcrypt")
 
 
 const UserRegisteration = Asynchandler(async (req,res)=>{
@@ -21,6 +22,8 @@ const UserRegisteration = Asynchandler(async (req,res)=>{
         res.status(400)
         throw new Error("User already exists")
     }
+
+    
     const user = await User.create({
         name,
         email,
@@ -38,7 +41,6 @@ const UserRegisteration = Asynchandler(async (req,res)=>{
             confirmPassword: user.confirmPassword,
             token:TOKEN(user._id)
         })
-               console.log(user)
     }else{
         res.status(400)
         throw new Error("User Not Created")
