@@ -70,6 +70,7 @@ export default function MenuAppBar() {
     navigate("/login");
   };
 
+  const logo = "C:/Users/ROHAN PARBATANI/OneDrive/Desktop/ChatGPT Image Apr 11, 2025, 08_44_55 AM.png"
   const toggleDrawer = (isOpen) => () => {
     setOpenDrawer(isOpen);
   };
