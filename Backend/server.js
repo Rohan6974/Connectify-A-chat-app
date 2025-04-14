@@ -14,7 +14,13 @@ connectDatabase
 
 const app = express();
 app.use(express.json());
-app.use(Cors());
+app.use(Cors(
+  {
+    origin:"http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  }
+));
 
 app.use("/user", UserRoute);
 app.use("/auth", AuthRoute);
