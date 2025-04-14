@@ -64,7 +64,7 @@ const server = app.listen(PORT, () => {
 const io = require("socket.io")(server, {
   pingTimeout: 90000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://connectify-a-chat-app.onrender.com",
   },
 });
 
