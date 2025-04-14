@@ -23,7 +23,8 @@ app.use("/messages", MessageRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-// ----------------- Deployment -----------------
+// ----------------------------------------------
+
 
 const __dirname1 = path.resolve();
 
@@ -40,7 +41,11 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// ----------------- Deployment -----------------
+
+
+
+// ----------------------------------------------
+
 
 // Error handlers must come after routes and deployment
 app.use(NotFoundHandler);
