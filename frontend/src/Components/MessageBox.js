@@ -3,7 +3,7 @@ import { ChatState } from "../context/context";
 import { Box } from "@mui/material";
 
 const MessageBox = ({ fetchAgain, setFetchAgain }) => {
-  const { selectedchat } = ChatState();
+  const { selectedchat } = ChatState()
 
   return (
     <Box
