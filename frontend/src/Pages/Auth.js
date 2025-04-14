@@ -16,7 +16,7 @@ const Auth = () => {
   const handleSendOtp = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:9438/auth", { email,otp, Headers: { "Content-Type": "application/json" } });
+      const res = await axios.post("https://connectify-a-chat-app.onrender.com/auth", { email,otp, Headers: { "Content-Type": "application/json" } });
       const data = await res.data;
       setReceivedOtp(data.otp);
 

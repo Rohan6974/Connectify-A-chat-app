@@ -90,7 +90,7 @@ export default function MenuAppBar() {
         },
       };
       const response = await axios.get(
-        `http://localhost:9438/user?search=${search}`,
+        `https://connectify-a-chat-app.onrender.com/user?search=${search}`,
         config
       );
 
@@ -112,7 +112,7 @@ export default function MenuAppBar() {
           
         }
       }
-      const {data} =await axios.post("http://localhost:9438/chats",{userId},config)  
+      const {data} =await axios.post("https://connectify-a-chat-app.onrender.com/chats",{userId},config)  
 
       setselectedchat(data);
       setchats([...chats,data]);

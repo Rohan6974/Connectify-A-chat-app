@@ -49,7 +49,7 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
       };
 
       const { data } = await axios.put(
-        "http://localhost:9438/chats/grouprename",
+        "https://connectify-a-chat-app.onrender.com/chats/grouprename",
         {
           chatId: selectedchat._id,
           chatName: groupName,
@@ -82,7 +82,7 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
 
       for (const userToAdd of selectedUsers) {
         const { data } = await axios.put(
-          "http://localhost:9438/chats/groupadd",
+          "https://connectify-a-chat-app.onrender.com/chats/groupadd",
           {
             chatId: selectedchat._id,
             userId: userToAdd._id,
@@ -115,7 +115,7 @@ const GroupChatModal = ({ fetchagain, setfetchagain }) => {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:9438/user?search=${search}`,
+        `https://connectify-a-chat-app.onrender.com/user?search=${search}`,
         config
       );
       setSearchresult(data);
