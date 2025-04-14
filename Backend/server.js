@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(Cors(
   {
-    origin:"http://localhost:3000",
+    origin:["http://localhost:3000", "https://connectify-a-chat-app.onrender.com" ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   }

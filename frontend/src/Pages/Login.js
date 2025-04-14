@@ -25,7 +25,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:9438/user/login", {
+      const response = await axios.post("https://connectify-a-chat-app.onrender.com/user/login", {
         email,
         password,
       });
