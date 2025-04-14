@@ -17,7 +17,7 @@ const Signup = () => {
     e.preventDefault();
   
     try {
-      const response = await axios.post("https://connectify-a-chat-app.onrender.com/user", {
+      const response = await axios.post("http://localhost:9438/user", {
         name,
         email,
         password,

@@ -30,7 +30,7 @@ const SingleChat = ({ fetchAgain, setfetchAgain }) => {
 
     try {
       const { data } = await axios.post(
-        "https://connectify-a-chat-app.onrender.com/messages",
+        "http://localhost:9438/messages",
         {
           content: newmessage,
           chatId: selectedchat._id,
@@ -58,7 +58,7 @@ const SingleChat = ({ fetchAgain, setfetchAgain }) => {
 
     try {
       const { data } = await axios.get(
-        `https://connectify-a-chat-app.onrender.com/messages/${selectedchat._id}`,
+        `http://localhost:9438/messages/${selectedchat._id}`,
         config
       );
       setmessages(data);

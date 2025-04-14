@@ -32,7 +32,7 @@ const Chats = ({ fetchAgain }) => {
 
   const getschats = async () => {
     try {
-      const res = await axios.get("https://connectify-a-chat-app.onrender.com/chats", {
+      const res = await axios.get("http://localhost:9438/chats", {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setchats(res.data);
@@ -62,7 +62,7 @@ const Chats = ({ fetchAgain }) => {
         },
       };
       const { data } = await axios.get(
-        `https://connectify-a-chat-app.onrender.com/user?search=${search}`,
+        `http://localhost:9438/user?search=${search}`,
         config
       );
       setSearchresult(data);
@@ -92,7 +92,7 @@ const Chats = ({ fetchAgain }) => {
       console.log("Sending payload:", payload);
 
       const { data } = await axios.post(
-        "https://connectify-a-chat-app.onrender.com/chats/group",
+        "http://localhost:9438/chats/group",
         payload,
         config
       );
